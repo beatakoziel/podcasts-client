@@ -11,7 +11,10 @@
         v-on:keyup.enter="submit"
       />
       <form class="form-inline my-2 my-lg-0">
-        <button class="btn shadow-none user-button"></button>
+        <button type="submit" class="btn shadow-none cart-button" @click="goToCart"></button>
+      </form>
+      <form class="form-inline my-2 my-lg-0">
+        <button class="btn shadow-none logout-button" @click="logout"></button>
       </form>
     </div>
   </nav>
@@ -24,6 +27,17 @@ export default {
     return { phrase: "" };
   },
   methods: {
+    goToCart() {
+      setTimeout(function() {
+        window.location.href = "/cart";
+      }, 1);
+    },
+    logout() {
+      this.$cookie.set("jwt", "", 1);
+      setTimeout(function() {
+        window.location.href = "/login";
+      }, 1);
+    },
     submit() {
       this.$emit("searchWasApproved", this.phrase);
       document
@@ -66,11 +80,9 @@ export default {
   padding-right: 25px;
 }
 
-.user-button {
-  width: 30px;
-  height: 30px;
+.logout-button,
+.cart-button {
   padding: 0;
-  background-image: url("../assets/user.png");
   background-size: contain;
   border: none;
   position: relative;
@@ -79,7 +91,20 @@ export default {
   background-color: transparent;
 }
 
-.user-button:active {
+.logout-button {
+  background-image: url("../assets/logout.png");
+  width: 30px;
+  height: 30px;
+}
+
+.cart-button {
+  background-image: url("../assets/cart.png");
+  width: 40px;
+  height: 40px;
+}
+
+.logout-button:active,
+.cart-button {
   transform: scale(0.9);
 }
 

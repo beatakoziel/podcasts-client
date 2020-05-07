@@ -5,6 +5,7 @@
       <app-banner></app-banner>
     </div>
     <app-toolbar :category.sync="category" @categoryWasEdited="category = $event"></app-toolbar>
+    <span id="error-span"></span>
     <app-podcast-panel :category.sync="category" :searchPhrase="searchPhrase"></app-podcast-panel>
     <app-footer></app-footer>
   </div>
@@ -32,6 +33,21 @@ export default {
 <style scoped>
 body {
   height: 100%;
+}
+
+#home {
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  position: absolute;
+}
+
+span {
+  margin-left: 110px;
+  position: flex;
+  font-family: "Francois One", sans-serif;
+  color: #62546a;
 }
 #header-banner-box {
   background: linear-gradient(to right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0)),

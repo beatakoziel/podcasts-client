@@ -17,6 +17,7 @@
     "vue": "^2.5.11",
     "vue-cookie": "^1.1.4",
     "vue-resource": "^1.5.1",
+    "vue-router": "^3.1.6",
     "vuex": "^3.2.0"
   },
   "browserslist": [
@@ -31,7 +32,7 @@
     "babel-preset-stage-3": "^6.24.1",
     "cross-env": "^5.0.5",
     "css-loader": "^0.28.7",
-    "file-loader": "^1.1.4",
+    "file-loader": "^1.1.11",
     "vue-loader": "^13.0.5",
     "vue-template-compiler": "^2.4.4",
     "webpack": "^3.6.0",

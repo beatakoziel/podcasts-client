@@ -13,8 +13,9 @@
         <a class="dropdown-item" id="all" @click="editCategory">Wszystkie</a>
         <a class="dropdown-item" id="mindset" @click="editCategory">Rozwój osobisty</a>
         <a class="dropdown-item" id="money" @click="editCategory">Pieniądze</a>
-        <a class="dropdown-item" id="parent" @click="editCategory">Rodzicielstwo</a>
+        <a class="dropdown-item" id="ecology" @click="editCategory">Ekologia</a>
         <a class="dropdown-item" id="politics" @click="editCategory">Polityka</a>
+        <a class="dropdown-item" id="favourite" @click="editCategory">Ulubione</a>
       </div>
     </div>
   </div>

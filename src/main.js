@@ -4,14 +4,17 @@ import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import JQuery from 'jquery'
 import products from '../podcasts.js'
-import Home from './Home.vue'
-import Login from './Login.vue'
-import Register from './Register.vue'
+import App from './App.vue'
 import VueResource from 'vue-resource'
 import VueCookie from 'vue-cookie'
+import VueRouter from 'vue-router'
+import {
+  routes
+} from './routes'
 
 Vue.use(VueCookie);
-Vue.use(VueResource)
+Vue.use(VueResource);
+Vue.use(VueRouter);
 Vue.use(Vuex);
 window.$ = JQuery;
 
@@ -21,18 +24,14 @@ const store = new Vuex.Store({
   }
 })
 
+const router = new VueRouter({
+  routes,
+  mode: 'history'
+})
+
 new Vue({
   el: '#app',
-  render: h => h(Home),
+  render: h => h(App),
+  router,
   store
-})
-
-new Vue({
-  el: '#login',
-  render: h => h(Login),
-})
-
-new Vue({
-  el: '#register',
-  render: h => h(Register),
 })

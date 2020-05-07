@@ -1,14 +1,47 @@
 <template >
   <div id="cards-panel">
-    <div class="card" v-for="podcast in filterEventsByCategory()" :key="`podcast-${podcast.title}`">
-      <img class="card-img-top" :src="podcast.imageUrl" alt="Card image cap" />
+    <div class="card" v-for="podcast in filterEventsByCategory()" :key="`podcast-${podcast.id}`">
+      <img class="card-img-top" :src="podcast.podcast.imageUrl" alt="Card image cap" />
       <div class="card-body">
-        <h5 class="card-title">{{podcast.title}}</h5>
-        <p class="card-text">{{podcast.description}}</p>
+        <h5 class="card-title">{{podcast.podcast.title}}</h5>
+        <p class="card-text">{{podcast.podcast.description}}</p>
+        <form class="form-inline my-2 my-lg-0">
+          <button
+            id="blocked-in-cart"
+            type="button"
+            class="btn shadow-none user-button blocked"
+            v-if="podcast.blocked && podcast.inCart"
+            @click="toggleShop(podcast.podcast.id)"
+          ></button>
+          <button
+            id="blocked-not-in-cart"
+            type="button"
+            class="btn shadow-none user-button blocked"
+            v-if="podcast.blocked && !podcast.inCart"
+            @click="toggleShop(podcast.podcast.id)"
+          ></button>
+        </form>
+        <form v-if="podcast.favourite" class="form-inline my-2 my-lg-0">
+          <button
+            id="favourite"
+            type="button"
+            class="btn shadow-none user-button"
+            @click="toggleFavourite(podcast.podcast.id)"
+          ></button>
+        </form>
+        <form v-else class="form-inline my-2 my-lg-0">
+          <button
+            id="not-favourite"
+            type="button"
+            class="btn shadow-none user-button"
+            @click="toggleFavourite(podcast.podcast.id)"
+          ></button>
+        </form>
         <button
           class="btn btn-outline-default shadow-none my-2 my-sm-0"
           type="button"
-          @click="play(podcast.audioUrl, $event)"
+          v-if="!podcast.blocked"
+          @click="play(podcast.podcast.audioUrl, $event)"
         >Odtwórz</button>
       </div>
     </div>
@@ -24,7 +57,8 @@ export default {
     return {
       podcasts: [],
       src: "",
-      player: new Audio()
+      player: new Audio(),
+      isInCart: false
     };
   },
   created() {},
@@ -36,19 +70,20 @@ export default {
   },
   methods: {
     play(audioUrl, event) {
-      console.log(event.currentTarget.innerHTML);
+      /* console.log(event.currentTarget.innerHTML);
       if (this.src == "") {
         this.src = audioUrl;
-        this.player.src = audioUrl;
+        this.player.src = require("./assets/metody_zmiany_nawykow.mp3");
         this.player.play();
         this.playing = true;
+        console.log(audioUrl);
         event.currentTarget.innerHTML = "Zatrzymaj";
       } else if (this.src == audioUrl) {
         this.player.pause();
         this.playing = false;
         event.currentTarget.innerHTML = "Odtwórz";
         this.src = "";
-      }
+      }*/
     },
     getPodcasts() {
       this.$http
@@ -57,17 +92,54 @@ export default {
             Authorization: this.$cookie.get("jwt")
           }
         })
-        .then(response => {
-          return response.json();
-        })
+        .then(
+          response => {
+            return response.json();
+          },
+          error => {
+            document.getElementById("error-span").innerHTML =
+              "Aby zobaczyć listę podcastów należy się zalogować.";
+            console.log(error);
+          }
+        )
         .then(data => {
           const resultArray = [];
           for (let key in data) {
-            resultArray.push(data[key].podcast);
+            resultArray.push(data[key]);
           }
           this.podcasts = resultArray;
           console.log(this.podcasts);
         });
+    },
+    toggleFavourite(id) {
+      var request = this.$http
+        .put("http://localhost:8081/users/favourites/" + id, this.user, {
+          headers: {
+            Authorization: this.$cookie.get("jwt")
+          }
+        })
+        .then(
+          response => {
+            this.getPodcasts();
+          },
+          error => {}
+        );
+    },
+    toggleShop(id) {
+      var request = this.$http
+        .put("http://localhost:8081/users/shopping-cart/" + id, this.user, {
+          headers: {
+            Authorization: this.$cookie.get("jwt")
+          }
+        })
+        .then(
+          response => {
+            this.getPodcasts();
+          },
+          error => {
+            console.log(error);
+          }
+        );
     },
     filterEventsByCategory() {
       console.log(this.searchPhrase);
@@ -79,22 +151,24 @@ export default {
       )
         return this.podcasts.filter(
           podcast =>
-            podcast.title
+            podcast.podcast.title
               .toUpperCase()
               .includes(this.searchPhrase.toUpperCase()) ||
-            podcast.description
+            podcast.podcast.description
               .toUpperCase()
               .includes(this.searchPhrase.toUpperCase())
         );
+      else if (this.category == "favourite")
+        return this.podcasts.filter(podcast => podcast.favourite == true);
       else
         return this.podcasts
-          .filter(podcast => podcast.category === this.category)
+          .filter(podcast => podcast.podcast.category === this.category)
           .filter(
             podcast =>
-              podcast.title
+              podcast.podcast.title
                 .toUpperCase()
                 .includes(this.searchPhrase.toUpperCase()) ||
-              podcast.description
+              podcast.podcast.description
                 .toUpperCase()
                 .includes(this.searchPhrase.toUpperCase())
           );
@@ -110,9 +184,60 @@ export default {
   display: block;
 }
 
+#blocked-in-cart,
+#blocked-not-in-cart {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  background-size: contain;
+  border: 1px solid transparent;
+  background-repeat: no-repeat;
+  position: absolute;
+  float: left;
+  margin-right: 150px;
+  background-color: transparent;
+}
+
+#blocked-in-cart {
+  background-image: url("./assets/full-cart.png");
+}
+
+#blocked-not-in-cart {
+  background-image: url("./assets/empty-cart.png");
+}
+
+#favourite,
+#not-favourite {
+  width: 28px;
+  height: 28px;
+  background-size: contain;
+  border: 1px solid transparent;
+  position: absolute;
+  background-repeat: no-repeat;
+  float: left;
+  margin-right: 190px;
+  background-color: transparent;
+}
+
+#favourite:hover,
+#not-favourite:hover {
+  transform: scale(1.1);
+}
+
+#favourite {
+  background-image: url("./assets/full-heart.png");
+}
+
+#not-favourite {
+  background-image: url("./assets/empty-heart.png");
+}
+
+#blocked:hover {
+  transform: scale(1.1);
+}
+
 .card:hover {
   transform: scale(1.02);
-  box-shadow: 0px 0px 20px #62546a;
 }
 
 .btn {
@@ -145,5 +270,11 @@ export default {
   margin: 10px 10px;
   width: 15rem;
   height: 25rem;
+}
+
+.in-cart,
+.inCart {
+  background-image: url("./assets/empty-heart.png");
+  background-color: red;
 }
 </style>

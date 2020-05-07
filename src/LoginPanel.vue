@@ -32,10 +32,13 @@
           style="float: right;"
           @click="submit"
         >Zaloguj</button>
+        <span id="login-error-span"></span>
       </form>
       <p>______________________________</p>
       <p id="question">Nie posiadasz jeszcze konta?</p>
-      <a>Zarejestruj</a>
+      <a>
+        <router-link to="/register">Zarejestruj</router-link>
+      </a>
     </div>
   </div>
 </template>
@@ -58,8 +61,19 @@ export default {
           this.$cookie.set("jwt", "Bearer " + response.body.jwt, 1);
           console.log("COOKIE");
           console.log(this.$cookie.get("jwt"));
+          document.getElementById("login-error-span").innerHTML =
+            "Zalogowano prawidłowo";
+          document.getElementById("login-error-span").style =
+            "color: lightgreen;";
+          setTimeout(function() {
+            window.location.href = "/home";
+          }, 100);
         },
         error => {
+          document.getElementById("login-error-span").innerHTML =
+            "Nieprawidłowe dane";
+          document.getElementById("login-error-span").style =
+            "color: lightcoral;";
           console.log(error);
         }
       );
@@ -69,6 +83,13 @@ export default {
 </script>
 
 <style scoped>
+span {
+  text-decoration: none;
+  font-weight: normal;
+  font-size: 90%;
+  float: left;
+}
+
 .card,
 .btn,
 .form-control {
@@ -84,7 +105,7 @@ form {
   margin-left: 10%;
   margin-top: 8%;
   margin-bottom: 15%;
-  width: fit-content;
+  width: 450px;
   font-family: "Francois One", sans-serif;
 }
 
