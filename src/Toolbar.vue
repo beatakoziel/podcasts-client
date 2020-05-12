@@ -1,7 +1,7 @@
 <template>
   <div id="toolbar">
+    <h3>Podcasty</h3>
     <div class="btn-group dropright">
-      <h3>Podcasty</h3>
       <button
         type="button"
         class="btn btn-secondary dropdown-toggle"
@@ -27,10 +27,10 @@
         aria-expanded="false"
       >Sortowanie</button>
       <div class="dropdown-menu">
-        <a class="dropdown-item" id="title-incr" @click="editCategory">Tytuł rosnąco</a>
-        <a class="dropdown-item" id="title-decr" @click="editCategory">Tytuł malejąco</a>
-        <a class="dropdown-item" id="length-inc" @click="editCategory">Długość rosnąco</a>
-        <a class="dropdown-item" id="length-dec" @click="editCategory">Długość malejąco</a>
+        <a class="dropdown-item" id="title-incr" @click="editSort">Tytuł rosnąco</a>
+        <a class="dropdown-item" id="title-decr" @click="editSort">Tytuł malejąco</a>
+        <a class="dropdown-item" id="length-inc" @click="editSort">Długość rosnąco</a>
+        <a class="dropdown-item" id="length-decr" @click="editSort">Długość malejąco</a>
       </div>
     </div>
   </div>
@@ -38,10 +38,13 @@
 
 <script>
 export default {
-  props: ["category"],
+  props: ["category", "sort"],
   methods: {
-    editCategory(item) {
+    editCategory() {
       this.$emit("categoryWasEdited", event.target.id);
+    },
+    editSort() {
+      this.$emit("sortWasEdited", event.target.id);
     }
   },
   created() {
@@ -61,31 +64,29 @@ export default {
 </script>
 <style scoped>
 h3 {
-  margin: 30% 50%;
   font-family: "Francois One", sans-serif;
   color: #62546a;
+  padding: 5px 5px;
+}
+
+#toolbar {
+  margin: 4% 0 2% 7%;
 }
 
 .btn {
   font-family: "Francois One", sans-serif;
   border-radius: 0px;
-  display: block;
+  height: fit-content;
   background-color: #62546a;
   color: white;
   border: 1px solid white;
-  margin: 30% 100%;
 }
 
 .btn:active {
   transform: scale(0.9);
 }
 
-.dropdown-toggle:focus {
-  border: 1px solid white;
-  box-shadow: none;
-  background-color: #62546a;
-}
-
+.dropdown-toggle:focus,
 .dropdown-toggle:active {
   border: 1px solid white;
   box-shadow: none;
@@ -96,18 +97,15 @@ h3 {
   border-radius: 0px;
 }
 
+.dropdown-item {
+  cursor: pointer;
+}
 .dropdown-item:hover {
   background-color: rgb(75, 0, 130, 0.1);
 }
 
-.show > .btn-secondary.dropdown-toggle:focus {
-  box-shadow: none;
-}
-
-.show > .btn-secondary.dropdown-toggle:active {
-  box-shadow: none;
-}
-
+.show > .btn-secondary.dropdown-toggle:focus,
+.show > .btn-secondary.dropdown-toggle:active,
 .btn-secondary:not(:disabled):not(.disabled):active:focus {
   box-shadow: none;
 }

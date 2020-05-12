@@ -4,10 +4,16 @@
       <app-header :searchPhrase="searchPhrase" @searchWasApproved="searchPhrase = $event"></app-header>
       <app-banner></app-banner>
     </div>
-    <app-toolbar :category.sync="category" @categoryWasEdited="category = $event"></app-toolbar>
+    <app-toolbar
+      :category.sync="category"
+      @categoryWasEdited="category = $event"
+      :sort.sync="sort"
+      @sortWasEdited="sort = $event"
+    ></app-toolbar>
     <span id="error-span"></span>
     <app-podcast-panel
       :category.sync="category"
+      :sort.sync="sort"
       :searchPhrase="searchPhrase"
       @srcChanged="src=$event"
       @play="play=$event"
@@ -34,7 +40,13 @@ export default {
     appToolbar: Toolbar
   },
   data: function() {
-    return { category: "all", searchPhrase: "", src: "", play: "false" };
+    return {
+      category: "all",
+      searchPhrase: "",
+      src: "",
+      play: "false",
+      sort: "title-incr"
+    };
   },
   watch: {
     src: function() {
@@ -82,6 +94,6 @@ span {
 
 audio {
   bottom: 0;
-  margin-left: 5%;
+  margin-left: 6%;
 }
 </style>

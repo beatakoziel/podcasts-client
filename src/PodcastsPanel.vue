@@ -3,8 +3,11 @@
     <div class="card" v-for="podcast in filterEventsByCategory()" :key="`podcast-${podcast.id}`">
       <img class="card-img-top" :src="podcast.podcast.imageUrl" alt="Card image cap" />
       <div class="card-body">
-        <h5 class="card-title">{{podcast.podcast.title}}</h5>
-        <p class="card-text">{{podcast.podcast.description}}</p>
+        <div class="text">
+          <h5 class="card-title">{{podcast.podcast.title}}</h5>
+          <p class="card-text">{{podcast.podcast.description}}</p>
+          <p class="timeLength">{{podcast.podcast.length}}</p>
+        </div>
         <form class="form-inline my-2 my-lg-0">
           <button
             id="blocked-in-cart"
@@ -51,7 +54,7 @@
 <script>
 import { mapGetters } from "vuex";
 export default {
-  props: ["category", "searchPhrase"],
+  props: ["category", "searchPhrase", "sort"],
   name: "PodcastsList",
   data() {
     return {
@@ -59,10 +62,6 @@ export default {
       src: "",
       isInCart: false
     };
-  },
-  created() {},
-  computed: {
-    //...mapGetters(["podcasts"])
   },
   beforeMount() {
     this.getPodcasts();
@@ -139,25 +138,48 @@ export default {
           }
         );
     },
+    sortByTitleIncr(a, b) {
+      if (this.sort == undefined || this.sort == "title-incr") {
+        if (a.podcast.title < b.podcast.title) return -1;
+        if (a.podcast.title > b.podcast.title) return 1;
+        return 0;
+      } else if (this.sort == "title-decr") {
+        if (a.podcast.title > b.podcast.title) return -1;
+        if (a.podcast.title < b.podcast.title) return 1;
+        return 0;
+      } else if (this.sort == "length-inc") {
+        if (a.podcast.length < b.podcast.length) return -1;
+        if (a.podcast.length > b.podcast.length) return 1;
+      } else if (this.sort == "length-decr") {
+        if (a.podcast.length > b.podcast.length) return -1;
+        if (a.podcast.length < b.podcast.length) return 1;
+      }
+    },
+
     filterEventsByCategory() {
       console.log(this.searchPhrase);
       console.log(this.category);
+      console.log(this.sort);
       if (
         this.category == "all" ||
         this.category == undefined ||
         this.category == null
       )
-        return this.podcasts.filter(
-          podcast =>
-            podcast.podcast.title
-              .toUpperCase()
-              .includes(this.searchPhrase.toUpperCase()) ||
-            podcast.podcast.description
-              .toUpperCase()
-              .includes(this.searchPhrase.toUpperCase())
-        );
+        return this.podcasts
+          .filter(
+            podcast =>
+              podcast.podcast.title
+                .toUpperCase()
+                .includes(this.searchPhrase.toUpperCase()) ||
+              podcast.podcast.description
+                .toUpperCase()
+                .includes(this.searchPhrase.toUpperCase())
+          )
+          .sort(this.sortByTitleIncr);
       else if (this.category == "favourite")
-        return this.podcasts.filter(podcast => podcast.favourite == true);
+        return this.podcasts
+          .filter(podcast => podcast.favourite == true)
+          .sort(this.sortByTitleIncr);
       else
         return this.podcasts
           .filter(podcast => podcast.podcast.category === this.category)
@@ -169,7 +191,8 @@ export default {
               podcast.podcast.description
                 .toUpperCase()
                 .includes(this.searchPhrase.toUpperCase())
-          );
+          )
+          .sort(this.sortByTitleIncr);
     }
   }
 };
@@ -194,6 +217,9 @@ export default {
   float: left;
   margin-right: 150px;
   background-color: transparent;
+}
+.text {
+  height: 250px;
 }
 
 #blocked-in-cart {
@@ -267,7 +293,7 @@ export default {
 .card {
   margin: 10px 10px;
   width: 15rem;
-  height: 25rem;
+  height: 450px;
 }
 
 .in-cart,
