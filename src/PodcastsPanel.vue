@@ -6,7 +6,8 @@
         <div class="text">
           <h5 class="card-title">{{podcast.podcast.title}}</h5>
           <p class="card-text">{{podcast.podcast.description}}</p>
-          <p class="timeLength">{{podcast.podcast.length}}</p>
+          <p class="timeLength">Długość: {{podcast.podcast.length}} min</p>
+          <p class="price card-text" v-if="podcast.blocked">Cena: {{podcast.podcast.price}} zł</p>
         </div>
         <form class="form-inline my-2 my-lg-0">
           <button
