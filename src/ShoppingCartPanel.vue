@@ -251,6 +251,7 @@ a:hover {
 
 .delete {
   color: white;
+  cursor: pointer;
 }
 .delete:hover {
   color: lightcoral;

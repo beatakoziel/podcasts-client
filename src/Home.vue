@@ -18,7 +18,7 @@
       @srcChanged="src=$event"
       @play="play=$event"
     ></app-podcast-panel>
-    <audio controls id="audio">
+    <audio controls id="audio" v-show="play==true">
       <source type="audio/mpeg" />
     </audio>
     <app-footer></app-footer>
@@ -53,6 +53,7 @@ export default {
       console.log(this.src);
       document.getElementById("audio").src =
         "http://localhost:8081/podcasts/play/" + this.src;
+      document.getElementById("audio").scrollIntoView({ behavior: "smooth" });
     },
     play: function() {
       if (this.play == true) document.getElementById("audio").play();

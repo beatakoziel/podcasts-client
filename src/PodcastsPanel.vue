@@ -72,14 +72,14 @@ export default {
         this.src = audioUrl;
         console.log(audioUrl);
         event.currentTarget.innerHTML = "Zatrzymaj";
-        this.$emit("srcChanged", audioUrl);
         this.$emit("play", true);
+        this.$emit("srcChanged", audioUrl);
       } else if (this.src == audioUrl) {
         this.playing = false;
         event.currentTarget.innerHTML = "Odtwórz";
         this.src = "";
-        this.$emit("srcChanged", "");
         this.$emit("play", false);
+        this.$emit("srcChanged", "");
       }
     },
     getPodcasts() {
@@ -179,6 +179,14 @@ export default {
       else if (this.category == "favourite")
         return this.podcasts
           .filter(podcast => podcast.favourite == true)
+          .sort(this.sortByTitleIncr);
+      else if (this.category == "bought")
+        return this.podcasts
+          .filter(podcast => podcast.blocked == false)
+          .sort(this.sortByTitleIncr);
+      else if (this.category == "unbought")
+        return this.podcasts
+          .filter(podcast => podcast.blocked == true)
           .sort(this.sortByTitleIncr);
       else
         return this.podcasts

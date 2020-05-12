@@ -16,6 +16,8 @@
         <a class="dropdown-item" id="ecology" @click="editCategory">Ekologia</a>
         <a class="dropdown-item" id="politics" @click="editCategory">Polityka</a>
         <a class="dropdown-item" id="favourite" @click="editCategory">Ulubione</a>
+        <a class="dropdown-item" id="bought" @click="editCategory">Zakupione</a>
+        <a class="dropdown-item" id="unbought" @click="editCategory">Niezakupione</a>
       </div>
     </div>
     <div class="btn-group dropright">
