@@ -57,7 +57,6 @@ export default {
     return {
       podcasts: [],
       src: "",
-      player: new Audio(),
       isInCart: false
     };
   },
@@ -70,20 +69,19 @@ export default {
   },
   methods: {
     play(audioUrl, event) {
-      /* console.log(event.currentTarget.innerHTML);
       if (this.src == "") {
         this.src = audioUrl;
-        this.player.src = require("./assets/metody_zmiany_nawykow.mp3");
-        this.player.play();
-        this.playing = true;
         console.log(audioUrl);
         event.currentTarget.innerHTML = "Zatrzymaj";
+        this.$emit("srcChanged", audioUrl);
+        this.$emit("play", true);
       } else if (this.src == audioUrl) {
-        this.player.pause();
         this.playing = false;
         event.currentTarget.innerHTML = "Odtwórz";
         this.src = "";
-      }*/
+        this.$emit("srcChanged", "");
+        this.$emit("play", false);
+      }
     },
     getPodcasts() {
       this.$http

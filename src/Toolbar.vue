@@ -18,6 +18,21 @@
         <a class="dropdown-item" id="favourite" @click="editCategory">Ulubione</a>
       </div>
     </div>
+    <div class="btn-group dropright">
+      <button
+        type="button"
+        class="btn btn-secondary dropdown-toggle"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >Sortowanie</button>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" id="title-incr" @click="editCategory">Tytuł rosnąco</a>
+        <a class="dropdown-item" id="title-decr" @click="editCategory">Tytuł malejąco</a>
+        <a class="dropdown-item" id="length-inc" @click="editCategory">Długość rosnąco</a>
+        <a class="dropdown-item" id="length-dec" @click="editCategory">Długość malejąco</a>
+      </div>
+    </div>
   </div>
 </template>
 

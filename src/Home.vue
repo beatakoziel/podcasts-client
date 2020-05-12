@@ -6,7 +6,15 @@
     </div>
     <app-toolbar :category.sync="category" @categoryWasEdited="category = $event"></app-toolbar>
     <span id="error-span"></span>
-    <app-podcast-panel :category.sync="category" :searchPhrase="searchPhrase"></app-podcast-panel>
+    <app-podcast-panel
+      :category.sync="category"
+      :searchPhrase="searchPhrase"
+      @srcChanged="src=$event"
+      @play="play=$event"
+    ></app-podcast-panel>
+    <audio controls id="audio">
+      <source type="audio/mpeg" />
+    </audio>
     <app-footer></app-footer>
   </div>
 </template>
@@ -26,7 +34,18 @@ export default {
     appToolbar: Toolbar
   },
   data: function() {
-    return { category: "all", searchPhrase: "" };
+    return { category: "all", searchPhrase: "", src: "", play: "false" };
+  },
+  watch: {
+    src: function() {
+      console.log(this.src);
+      document.getElementById("audio").src =
+        "http://localhost:8081/podcasts/play/" + this.src;
+    },
+    play: function() {
+      if (this.play == true) document.getElementById("audio").play();
+      else document.getElementById("audio").stop();
+    }
   }
 };
 </script>
@@ -59,5 +78,10 @@ span {
   background-blend-mode: darken;
   color: white;
   box-shadow: 0px 0px 100px black;
+}
+
+audio {
+  bottom: 0;
+  margin-left: 5%;
 }
 </style>
