@@ -1,6 +1,16 @@
 <template>
   <div id="admin-panel">
     <app-header></app-header>
+    <b-modal id="modal-scoped">
+      <template v-slot:modal-header>
+        <h5>Usuń produkt</h5>
+      </template>
+      <div class="d-block">Czy na pewno chcesz usunąć podcast?</div>
+      <template v-slot:modal-footer="{ ok, cancel }">
+        <b-button size="sm" @click="cancel()">Wyjdź</b-button>
+        <b-button size="sm" @click="deleteItem">Usuń</b-button>
+      </template>
+    </b-modal>
     <div class="card">
       <div class="card-body">
         <a class="add">Dodaj produkt</a>
@@ -12,24 +22,17 @@
               <th scope="col">Długość</th>
               <th scope="col">Cena</th>
               <th scope="col"></th>
-              <th scope="col"></th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="podcast in podcasts" :key="`podcast-${podcast.id}`">
-              <td>{{podcast.podcast.title}}</td>
-              <td>{{podcast.podcast.description}}</td>
-              <td style="text-align:center;">{{podcast.podcast.length}} min</td>
-              <td
-                style="text-align:center;"
-                v-if="podcast.podcast.price!=null"
-              >{{podcast.podcast.price}} zł</td>
+              <td>{{podcast.title}}</td>
+              <td>{{podcast.description}}</td>
+              <td style="text-align:center;">{{podcast.length}} min</td>
+              <td style="text-align:center;" v-if="podcast.price!=null">{{podcast.price}} zł</td>
               <td style="text-align:center;" v-else>-</td>
               <td style="text-align:center;">
                 <a class="edit">Edytuj</a>
-              </td>
-              <td style="text-align:center;">
-                <a class="delete" @click="deleteItem(shoppingItem.id)">Usuń</a>
               </td>
             </tr>
           </tbody>
@@ -48,7 +51,9 @@ export default {
     return {
       podcasts: [],
       src: "",
-      isInCart: false
+      isInCart: false,
+      modalShow: false,
+      podcastToDelete: ""
     };
   },
   beforeMount() {
@@ -57,7 +62,7 @@ export default {
   methods: {
     getPodcasts() {
       this.$http
-        .get("http://localhost:8081/users/podcasts", {
+        .get("http://localhost:8081/podcasts", {
           headers: {
             Authorization: this.$cookie.get("jwt")
           }
@@ -80,6 +85,15 @@ export default {
           this.podcasts = resultArray;
           console.log(this.podcasts);
         });
+    },
+    showModal() {
+      this.$root.$emit("bv::show::modal", "modal-scoped", "#btnShow");
+    },
+    hideModal() {
+      this.$root.$emit("bv::hide::modal", "modal-scoped", "#btnShow");
+    },
+    toggleModal() {
+      this.$root.$emit("bv::toggle::modal", "modal-scoped", "#btnToggle");
     }
   }
 };
@@ -104,6 +118,9 @@ body {
   background-blend-mode: darken;
 }
 
+#modal-scoped___BV_modal_content_ {
+  background-color: rgba(0, 0, 0, 0.4);
+}
 .card {
   background-color: rgba(0, 0, 0, 0.4);
   padding: 0 4%;
