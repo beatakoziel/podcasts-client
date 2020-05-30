@@ -1,8 +1,9 @@
 <template>
   <nav class="navbar navbar-inverse">
-    <a class="navbar-brand" id="logo" href="#">PURPLECAST</a>
+    <a class="navbar-brand" id="logo" href="/home">PURPLECAST</a>
     <div class="inline">
       <input
+        v-if="this.$cookie.get('role')=='USER'"
         class="form-control btn-light"
         type="search"
         placeholder="Szukaj"
@@ -10,8 +11,11 @@
         v-model="phrase"
         v-on:keyup.enter="submit"
       />
-      <form class="form-inline my-2 my-lg-0">
+      <form v-if="this.$cookie.get('role')=='USER'" class="form-inline my-2 my-lg-0">
         <button type="submit" class="btn shadow-none cart-button" @click="goToCart"></button>
+      </form>
+      <form v-if="this.$cookie.get('role')=='ADMIN'" class="form-inline my-2 my-lg-0">
+        <button class="btn shadow-none admin-button" @click="goToAdminPanel"></button>
       </form>
       <form class="form-inline my-2 my-lg-0">
         <button class="btn shadow-none logout-button" @click="logout"></button>
@@ -32,8 +36,14 @@ export default {
         window.location.href = "/cart";
       }, 1);
     },
+    goToAdminPanel() {
+      setTimeout(function() {
+        window.location.href = "/admin-panel";
+      }, 1);
+    },
     logout() {
       this.$cookie.set("jwt", "", 1);
+      this.$cookie.set("role", "", 1);
       setTimeout(function() {
         window.location.href = "/login";
       }, 1);
@@ -81,7 +91,8 @@ export default {
 }
 
 .logout-button,
-.cart-button {
+.cart-button,
+.admin-button {
   padding: 0;
   background-size: contain;
   border: none;
@@ -101,6 +112,12 @@ export default {
   background-image: url("../assets/cart.png");
   width: 40px;
   height: 40px;
+}
+
+.admin-button {
+  background-image: url("../assets/big-admin.png");
+  width: 30px;
+  height: 30px;
 }
 
 .logout-button:active,

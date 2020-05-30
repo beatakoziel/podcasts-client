@@ -59,6 +59,7 @@ export default {
       this.$http.post("http://localhost:8081/login", this.user).then(
         response => {
           this.$cookie.set("jwt", "Bearer " + response.body.jwt, 1);
+          this.$cookie.set("role", response.body.userRole, 1);
           console.log("COOKIE");
           console.log(this.$cookie.get("jwt"));
           document.getElementById("login-error-span").innerHTML =
