@@ -7,25 +7,28 @@
           <h5 class="card-title">{{podcast.podcast.title}}</h5>
           <p class="card-text">{{podcast.podcast.description}}</p>
           <p class="timeLength">Długość: {{podcast.podcast.length}} min</p>
-          <p class="price card-text" v-if="podcast.blocked">Cena: {{podcast.podcast.price}} zł</p>
+          <p
+            class="price card-text"
+            v-if="podcast.podcast.blocked"
+          >Cena: {{podcast.podcast.price}} zł</p>
         </div>
         <form class="form-inline my-2 my-lg-0">
           <button
             id="blocked-in-cart"
             type="button"
             class="btn shadow-none user-button blocked"
-            v-if="podcast.blocked && podcast.inCart"
+            v-if="podcast.podcast.blocked && podcast.podcast.inCart"
             @click="toggleShop(podcast.podcast.id)"
           ></button>
           <button
             id="blocked-not-in-cart"
             type="button"
             class="btn shadow-none user-button blocked"
-            v-if="podcast.blocked && !podcast.inCart"
+            v-if="podcast.podcast.blocked && !podcast.podcast.inCart"
             @click="toggleShop(podcast.podcast.id)"
           ></button>
         </form>
-        <form v-if="podcast.favourite" class="form-inline my-2 my-lg-0">
+        <form v-if="podcast.podcast.favourite" class="form-inline my-2 my-lg-0">
           <button
             id="favourite"
             type="button"
@@ -44,7 +47,7 @@
         <button
           class="btn btn-outline-default shadow-none my-2 my-sm-0"
           type="button"
-          v-if="!podcast.blocked"
+          v-if="!podcast.podcast.blocked"
           @click="play(podcast.podcast.audioUrl, $event)"
         >Odtwórz</button>
       </div>
