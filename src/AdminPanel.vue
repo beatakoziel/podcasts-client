@@ -23,6 +23,82 @@
         <b-button size="sm" @click="addAudio">Dodaj</b-button>
       </template>
     </b-modal>
+    <b-modal id="modal-edit">
+      <template v-slot:modal-header>
+        <h5>Edytuj podcast</h5>
+      </template>
+      <form>
+        <div class="form-group">
+          <label for="title">Tytuł</label>
+          <input
+            type="text"
+            class="form-control"
+            id="title"
+            placeholder="Wprowadź tytuł podcastu"
+            value="JAKIS TYTUL"
+            v-model="podcastToUpdate.title"
+          />
+        </div>
+        <div class="form-group">
+          <label for="description">Opis</label>
+          <input
+            type="text"
+            class="form-control"
+            id="description"
+            placeholder="Wprowadź opis podcastu"
+            v-model="podcastToUpdate.description"
+          />
+        </div>
+        <div class="form-group">
+          <label for="price">Cena</label>
+          <input
+            type="number"
+            class="form-control"
+            id="price"
+            placeholder="Wprowadź cenę podcastu"
+            v-model="podcastToUpdate.price"
+          />
+        </div>
+        <div class="form-group">
+          <label for="length">Długość</label>
+          <input
+            type="number"
+            class="form-control"
+            id="length"
+            placeholder="Wprowadź długość podcastu"
+            v-model="podcastToUpdate.length"
+          />
+        </div>
+        <div class="form-group">
+          <label for="imageUrl">Url do zdjęcia</label>
+          <input
+            type="text"
+            class="form-control"
+            id="imageUrl"
+            placeholder="Wprowadź url do zdjęcia okładkowego"
+            v-model="podcastToUpdate.imageUrl"
+          />
+        </div>
+        <label>Kategoria</label>
+        <select class="form-control form-control-sm" v-model="podcastToUpdate.category">
+          <option disabled value>Wybierz kategorię</option>
+          <option value="mindset">Rozwój osobisty</option>
+          <option value="money">Pieniądze</option>
+          <option value="ecology">Ekologia</option>
+          <option value="politics">Polityka</option>
+        </select>
+
+        <label>Nazwa pliku</label>
+        <select class="form-control form-control-sm" v-model="podcastToUpdate.fileName">
+          <option disabled value>Wybierz nazwę pliku</option>
+          <option v-for="fileName in filesNames" :key="fileName">{{fileName}}</option>
+        </select>
+      </form>
+      <template v-slot:modal-footer="{ ok, cancel }">
+        <b-button size="sm" @click="cancel()">Wyjdź</b-button>
+        <b-button size="sm" @click="editPodcast">Edytuj</b-button>
+      </template>
+    </b-modal>
     <b-modal id="modal-scoped">
       <template v-slot:modal-header>
         <h5>Dodaj podcast</h5>
@@ -116,11 +192,11 @@
             <tr v-for="podcast in podcasts" :key="`podcast-${podcast.id}`">
               <td>{{podcast.title}}</td>
               <td>{{podcast.description}}</td>
-              <td style="text-align:center;">{{podcast.length}} min</td>
+              <td style="text-align:center;">{{podcast.length.replace(".",":")}} min</td>
               <td style="text-align:center;" v-if="podcast.price!=null">{{podcast.price}} zł</td>
               <td style="text-align:center;" v-else>-</td>
               <td style="text-align:center;">
-                <a class="edit" @click="showModal">Edytuj</a>
+                <a class="edit" @click="showEditModal(podcast.id)">Edytuj</a>
               </td>
             </tr>
           </tbody>
@@ -144,6 +220,16 @@ export default {
       filesNames: [],
       file: null,
       podcastToAdd: {
+        title: "",
+        description: "",
+        category: "",
+        imageUrl: "",
+        price: null,
+        length: null,
+        fileName: ""
+      },
+      idToUpdate: null,
+      podcastToUpdate: {
         title: "",
         description: "",
         category: "",
@@ -196,6 +282,32 @@ export default {
         .then(
           response => {
             this.getPodcasts();
+            this.hideModal();
+            return response.json();
+          },
+          error => {
+            document.getElementById("error-span").innerHTML =
+              "Aby zobaczyć listę podcastów należy się zalogować jako admin.";
+            console.log(error);
+          }
+        );
+    },
+    editPodcast() {
+      console.log(this.podcastToAdd);
+      this.$http
+        .put(
+          "http://localhost:8081/podcasts/" + this.idToUpdate,
+          this.podcastToUpdate,
+          {
+            headers: {
+              Authorization: this.$cookie.get("jwt")
+            }
+          }
+        )
+        .then(
+          response => {
+            this.getPodcasts();
+            this.hideEditModal();
             return response.json();
           },
           error => {
@@ -218,10 +330,11 @@ export default {
         .then(
           response => {
             this.getFileNames();
+            this.hideAudioModal();
             return response.json();
           },
           error => {
-            document.getElementById("error-span").innerHTML =
+            document.getElementById("audio-error-span").innerHTML =
               "Aby zobaczyć listę podcastów należy się zalogować jako admin.";
             console.log(error);
           }
@@ -260,12 +373,41 @@ export default {
     showModal() {
       this.$root.$emit("bv::show::modal", "modal-scoped", "#btnShow");
     },
-
     showAudioModal() {
       this.$root.$emit("bv::show::modal", "modal-audio", "#btnShow");
     },
+    showEditModal(id) {
+      this.idToUpdate = id;
+      this.$http
+        .get("http://localhost:8081/podcasts/" + id, {
+          headers: {
+            Authorization: this.$cookie.get("jwt")
+          }
+        })
+        .then(
+          response => {
+            return response.json();
+          },
+          error => {
+            document.getElementById("error-span").innerHTML =
+              "Aby zobaczyć listę podcastów należy się zalogować jako admin.";
+            console.log(error);
+          }
+        )
+        .then(data => {
+          this.podcastToUpdate = data;
+          console.log(data);
+        });
+      this.$root.$emit("bv::show::modal", "modal-edit", "#btnShow");
+    },
     hideModal() {
       this.$root.$emit("bv::hide::modal", "modal-scoped", "#btnShow");
+    },
+    hideAudioModal() {
+      this.$root.$emit("bv::hide::modal", "modal-audio", "#btnShow");
+    },
+    hideEditModal() {
+      this.$root.$emit("bv::hide::modal", "modal-edit", "#btnShow");
     },
     toggleModal() {
       this.$root.$emit("bv::toggle::modal", "modal-scoped", "#btnToggle");
