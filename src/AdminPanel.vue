@@ -142,14 +142,15 @@ export default {
       isInCart: false,
       modalShow: false,
       filesNames: [],
+      file: null,
       podcastToAdd: {
         title: "",
         description: "",
         category: "",
+        imageUrl: "",
         price: null,
         length: null,
-        fileName: "",
-        file: null
+        fileName: ""
       }
     };
   },
@@ -183,6 +184,26 @@ export default {
           this.filesNames = resultArray;
           console.log(this.filesNames);
         });
+    },
+    addPodcast() {
+      console.log(this.podcastToAdd);
+      this.$http
+        .post("http://localhost:8081/podcasts", this.podcastToAdd, {
+          headers: {
+            Authorization: this.$cookie.get("jwt")
+          }
+        })
+        .then(
+          response => {
+            this.getPodcasts();
+            return response.json();
+          },
+          error => {
+            document.getElementById("error-span").innerHTML =
+              "Aby zobaczyć listę podcastów należy się zalogować jako admin.";
+            console.log(error);
+          }
+        );
     },
     addAudio() {
       let formData = new FormData();
