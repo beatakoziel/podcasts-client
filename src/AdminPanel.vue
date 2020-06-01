@@ -185,6 +185,7 @@
               <th scope="col">Opis</th>
               <th scope="col">Długość</th>
               <th scope="col">Cena</th>
+              <th scope="col">Widoczność</th>
               <th scope="col"></th>
             </tr>
           </thead>
@@ -195,6 +196,18 @@
               <td style="text-align:center;">{{podcast.length.replace(".",":")}} min</td>
               <td style="text-align:center;" v-if="podcast.price!=null">{{podcast.price}} zł</td>
               <td style="text-align:center;" v-else>-</td>
+              <td style="text-align:center;" v-if="podcast.visible==true">
+                <input
+                  type="checkbox"
+                  name="visibility"
+                  value="true"
+                  checked
+                  @change="check(podcast.id)"
+                />
+              </td>
+              <td style="text-align:center;" v-else>
+                <input type="checkbox" name="visibility" value="true" @change="check(podcast.id)" />
+              </td>
               <td style="text-align:center;">
                 <a class="edit" @click="showEditModal(podcast.id)">Edytuj</a>
               </td>
@@ -283,6 +296,26 @@ export default {
           response => {
             this.getPodcasts();
             this.hideModal();
+            return response.json();
+          },
+          error => {
+            document.getElementById("error-span").innerHTML =
+              "Aby zobaczyć listę podcastów należy się zalogować jako admin.";
+            console.log(error);
+          }
+        );
+    },
+    check(id) {
+      console.log(this.podcastToAdd);
+      this.$http
+        .put("http://localhost:8081/podcasts/visibility/" + id, {
+          headers: {
+            Authorization: this.$cookie.get("jwt")
+          }
+        })
+        .then(
+          response => {
+            this.getPodcasts();
             return response.json();
           },
           error => {
