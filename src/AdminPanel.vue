@@ -316,6 +316,7 @@ export default {
         .then(
           response => {
             this.getPodcasts();
+            this.hideModal();
             return response.json();
           },
           error => {
