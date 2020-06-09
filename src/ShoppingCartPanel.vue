@@ -67,6 +67,7 @@ export default {
       }, 100);
     },
     getSum(cart) {
+      this.sum = 0;
       Object.entries(cart).forEach(([key, val]) => {
         this.sum = this.sum + val.price;
       });
@@ -97,6 +98,7 @@ export default {
             resultArray.push(data[key]);
           }
           this.cart = resultArray;
+          console.log(this.cart);
           this.getSum(resultArray);
           this.error = false;
           console.log(this.cart);
